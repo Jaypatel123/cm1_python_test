@@ -3,20 +3,38 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseBadRequest, Http404
+from reddit.models import Submission, Comment, Vote
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
-
 from reddit.forms import UserForm, ProfileForm
 from reddit.utils.helpers import post_only
 from users.models import RedditUser
 
 
 def user_profile(request, username):
+    ## Adds Title 
+    all_submissions = Submission.objects.order_by('-score').all()
+    paginator = Paginator(all_submissions, 25)
+    page = request.GET.get('page', 1)
+    # comment = Comment.html_comment.get()
+    all_comments = Comment.objects.all()
+    ## Adding comments on the Home page
+    # this_submission = get_object_or_404(Submission)
+    # thread_comments = Comment.objects.filter(submission=this_submission)
+
+    try:
+        submissions = paginator.page(page)
+    except PageNotAnInteger:
+        raise Http404
+    except EmptyPage:
+        submissions = paginator.page(paginator.num_pages)
+
     user = get_object_or_404(User, username=username)
     profile = RedditUser.objects.get(user=user)
 
-    return render(request, 'public/profile.html', {'profile': profile})
-
-
+    return render(request, ['public/profile.html', 'public/frontpage.html', 'public/comments.html'], {'profile': profile,
+                                                                              'submissions': submissions,
+                                                                              'comments'   : all_comments})
 @login_required
 def edit_profile(request):
     user = RedditUser.objects.get(user=request.user)

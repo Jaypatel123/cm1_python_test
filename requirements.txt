@@ -1,1 +1,4 @@
 -r requirements/production.txt
+-r requirements/base.txt
+-r requirements/local.txt
+

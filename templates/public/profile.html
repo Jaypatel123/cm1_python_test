@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
+{% load humanize %}
+{% load mptt_tags %}
 
 {% block content %}
+
     <div class="container">
         <div class="row">
             <div class="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
@@ -83,6 +86,21 @@
             </div>
         </div>
     </div>
-
-
+        <div>
+            <h1>Submissions</h1>
+            {% for submission in submissions %}
+                <h4>{{submission.title}}</h4>
+                <h6 class="thread-info">submitted {{ submission.timestamp|naturaltime }} by 
+                    <a href="/user/{{ submission.author_name }}">{{ submission.author_name }}</a></h6>
+            {% endfor%}
+            </div>
+            
+            <div>
+                <h1>Comments</h1>
+                {% recursetree comments %}
+                <h4>{{ node.html_comment|safe }}</h4>
+                <h5>posted {{ node.timestamp|naturaltime }}</h5>
+                {% endrecursetree %}
+            </div>
+            
 {% endblock %}
