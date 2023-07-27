@@ -3,7 +3,6 @@
 
 {% block content %}
     {#    Submission block#}
-
     <div class="media">
         <div class="media-left">
             <div class="vote"
@@ -21,7 +20,11 @@
         <div class="media-body">
             <div class="reply-container">
                 <a class="thread-title" href="{{ submission.linked_url }}">{{ submission.title }}</a>
+                {{ node.html_comment|safe }}
                 <br>
+                <a href="{% url 'resubmit' submission.id %}">edit</a>
+                <br>
+                <!-- <h6>{{ submission.text }}</h6> -->
                 <h6 class="thread-info">submitted {{ submission.timestamp|naturaltime }} by <a
                         href="/user/{{ submission.author_name }}">{{ submission.author_name }}</a></h6>
                 {{ submission.text_html|safe }}
@@ -31,9 +34,7 @@
             </div>
         </div>
 
-
-        {#    New comment block#}
-
+        {#New comment block#}
         <form id="commentForm" class="form-horizontal"
               action="/post/comment/"
               data-parent-type="submission"
@@ -55,7 +56,6 @@
                 </div>
             </fieldset>
         </form>
-
         {% include '__items/comment.html' %}
 
 {% endblock %}

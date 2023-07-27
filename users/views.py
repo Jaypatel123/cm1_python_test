@@ -103,7 +103,7 @@ def user_logout(request):
     return redirect('frontpage')
 
 
-def register(request):
+def register(request, pk):
     """
     Handles user registration using UserForm from forms.py
     Creates new User and new RedditUser models if appropriate data
@@ -111,6 +111,7 @@ def register(request):
 
     If account has been created user is redirected to login page.
     """
+    
     user_form = UserForm()
     if request.user.is_authenticated():
         messages.warning(request,

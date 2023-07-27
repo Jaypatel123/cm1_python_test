@@ -6,11 +6,13 @@ Django settings for django_reddit project.
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
+# from environ import Env
 import os
 import environ
-
+# env = Env()
+# SECRET_KEY = env('SECRET_KEY')
 ROOT_DIR = environ.Path(__file__) - 3  # (/a/b/myfile.py - 3 = /)
-
+# env = Env()
 env = environ.Env()
 
 # APP CONFIGURATION

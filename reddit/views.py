@@ -1,3 +1,4 @@
+import pdb
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -7,7 +8,7 @@ from django.http import JsonResponse, HttpResponseBadRequest, Http404, \
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.defaulttags import register
 
-from reddit.forms import SubmissionForm
+from reddit.forms import SubmissionForm, ReSubmissionForm
 from reddit.models import Submission, Comment, Vote
 from reddit.utils.helpers import post_only
 from users.models import RedditUser
@@ -256,3 +257,25 @@ def submit(request):
             return redirect('/comments/{}'.format(submission.id))
 
     return render(request, 'public/submit.html', {'form': submission_form})
+
+def resubmit(request, submission_id):
+    submission = Submission.objects.get(id=submission_id)
+
+    if request.method == 'GET':
+        submission_form = SubmissionForm(instance=submission)
+        user = User.objects.get(username=request.user)
+        print(user, user.reddituser, user.username)
+        print(submission)
+
+    elif request.method == 'POST':
+        submission_form = SubmissionForm(request.POST, instance=submission)
+        if submission_form.is_valid():
+            submission = submission_form.save(commit=False)
+            submission.generate_html()
+            submission.save()
+            messages.success(request, 'Submission edited successfully')
+        return redirect('/comments/{}'.format(submission.id))
+    else:
+        raise Http404
+        
+    return render(request, 'public/resubmit.html', {'form': submission_form})
